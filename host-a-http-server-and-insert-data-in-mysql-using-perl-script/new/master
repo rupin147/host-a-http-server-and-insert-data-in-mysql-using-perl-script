@@ -1,0 +1,73 @@
+#!/usr/bin/perl
+#For More Visit rupinp.blogspot.com
+ {
+ package WebServer;
+
+ use HTTP::Server::Simple::CGI;
+ use base qw(HTTP::Server::Simple::CGI);
+  print "Content-type: text/html\n\n";
+ sub handle_request {
+#----------------------HTML CODE-----------------------------
+print <<ENDHTML;
+<html>
+<head>
+<title>CGI Test</title>
+</head>
+<body>
+<form action=@formin method="post" name="myForm">
+    First Name:
+    <input type="text" name="firstname"><br>
+    Last Name:
+    <input type="text" name="lastname"><br>
+    Password:
+    <input type="password" name="pwd"><br>
+    Radio Button: Are you male or female?<br>
+    <input type="radio" name="sex" value="male">Male
+    <input type="radio" name="sex" value="female">Female<br>
+    Check Box: Check the languages you know<br>
+    <input type="checkbox" name="language" value="html">HTML<br>
+    <input type="checkbox" name="language" value="Perl">Perl<br>
+    <input type="checkbox" name="language" value="C">C<br> 
+    <input type="checkbox" name="language" value="Java">Java<br>
+    <input type="checkbox" name="language" value=".Net">.Net<br>
+    <input type="submit" value="submit"><br>
+</form>       
+</body>
+</html>
+
+ENDHTML
+#------------------HTML CODE END-------------------------------
+#------------------Fetch Data from browser--------------------
+my @array = @formin;
+mysub(\@array);
+sub mysub{
+use CGI qw/ param header /;
+    my $firstname = param('firstname');
+    my $lastname = param('lastname');
+    my $password = param('pwd');
+    my $sex = param('sex');
+    my @language = param ('language');
+#-------------------------------------------------------------
+#-------------------Connect to database----------------------
+use DBI;
+$ip = "localhost";
+$user = "root";
+$pass = "123";
+$dbname = "form";
+$dbh = DBI->connect("DBI:mysql:$dbname:$ip",$user,$pass)||die "could not connect to db: $DBI::errstr";
+
+my @db =  ( "insert into form(first_name,last_name, passowrd,sex,language) values ('$firstname','$lastname','$password','$sex','@language')");
+for my $sql(@db){
+$dbh->do($sql);
+}
+$dbh->do("DELETE FROM form WHERE first_name = '';");
+   $dbh->disconnect();
+
+}
+ }
+ }
+#------------------------------------------------------------------------------
+#-------------------- start the server on port 8080--------------------------------
+ my $server = WebServer->new();
+ $server->run();
+#------------------------------------------------------------------------------------
