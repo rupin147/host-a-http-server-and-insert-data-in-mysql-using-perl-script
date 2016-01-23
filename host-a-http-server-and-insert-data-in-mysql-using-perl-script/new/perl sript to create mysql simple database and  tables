@@ -1,0 +1,23 @@
+#!/usr/bin/perl
+use DBI;
+my $db = DBI->connect("dbi:mysql:","root","123")||die "could not connect to db: $DBI::errstr";
+$db -> do("create database form");
+$db->disconnect();
+$ip = "localhost";
+$user = "root";
+$pass = "123";
+$dbname = "form";
+$dbh = DBI->connect("DBI:mysql:$dbname:$ip",$user,$pass)||die "could not connect to db: $DBI::errstr";
+my @db =  (
+ "create table form (
+first_name varchar(20),
+last_name varchar(20),
+passowrd varchar(20),
+sex varchar(10),
+language varchar(60)
+)ENGINE=InnoDB"
+);
+for my $sql(@db){
+$dbh->do($sql);
+}
+$dbh->disconnect();
