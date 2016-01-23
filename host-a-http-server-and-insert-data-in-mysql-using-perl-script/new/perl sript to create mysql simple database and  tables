@@ -1,4 +1,5 @@
 #!/usr/bin/perl
+#For More Visit rupinp.blogspot.com
 use DBI;
 my $db = DBI->connect("dbi:mysql:","root","123")||die "could not connect to db: $DBI::errstr";
 $db -> do("create database form");
